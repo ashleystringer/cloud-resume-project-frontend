@@ -1,0 +1,154 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Site</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <script defer>
+                let count = 0;
+                let url = `https://h67uyj5484.execute-api.us-east-1.amazonaws.com/count`;
+    
+                console.log(url);
+    
+                /*fetch(url, { method: "GET" })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data)
+                    count = data.count
+                    console.log(count)
+                })
+                .catch(err => {
+                    console.error(err)
+                })*/
+    
+                if (localStorage.getItem('visitorCount')){
+                    fetch(url, { method: "GET" })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                        count = data.count
+                        console.log(`count: ${count}`);
+                        localStorage.setItem('visitorCount', count)
+                        document.querySelector(".visitor-count").innerText = localStorage.getItem('visitorCount');
+                    })
+                } else {
+                    fetch(url, { method: "PUT" })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                        count = data.count
+                        localStorage.setItem('visitorCount', count)
+                        document.querySelector(".visitor-count").innerText = localStorage.getItem('visitorCount');
+                    })
+                 }
+
+                console.log(`count: ${count}`);
+                console.log(`visitorCount: ${localStorage.getItem('visitorCount')}`);
+                console.log(`document.querySelector(".visitor-count"): ${document.querySelector(".visitor-count")}`);
+    </script>
+
+    <!-- Title -->
+     <div class="name">Ashley Stringer</div> <!-- font-size: 36px -->
+
+    <!-- Personal Info -->
+    <div class="personal-info">
+        <ul>
+            <li>Phone: </li> <!-- font-size: 10px -->
+            <li>Address: </li> <!-- font-size: 10px -->
+            <li>Email: </li> <!-- font-size: 10px -->
+        </ul>
+    </div>
+    <!-- Education -->
+     <div class="section-title">
+        Education <!-- font-size: 9px; bold -->
+     </div>
+     <div>
+        <div>
+            <div class="university-name">University</div>
+            <div class="degree">and degree</div>
+        </div> <!-- font-size: 9px -->
+        <div class="education-minors">Minors: </div> <!-- font-size: 9px -->
+        <div class="course-list">
+            <div>Courses:</div> 
+            <ul>
+                <li>Course</li> <!-- font-size: 9px -->
+                <li>Course</li> <!-- font-size: 9px -->
+                <li>Course</li> <!-- font-size: 9px -->
+            </ul>
+        </div> <!-- font-size: 9px -->
+     </div>
+
+    <!-- Work Experience -->
+    <div class="section-title">
+        Experience <!-- font-size: 9px; bold -->
+     </div>
+     <div>
+        <div>
+            <div class="workplace-name">Company name and </div>
+            <div class="job-title">job title</div>
+        </div> <!-- font-size: 11px -->
+        <div class="date">Dates</div> <!-- font-size: 8px -->
+        <ul class="job-responsibilities">
+            <li>Responsibility</li> <!-- font-size: 8px -->
+            <li>Responsibility</li> <!-- font-size: 8px -->
+            <li>Responsibility</li> <!-- font-size: 8px -->
+        </ul>
+     </div>
+     <div>
+        <div>
+            <div class="workplace-name">Company name and </div>
+            <div class="job-title">job title</div>
+        </div> <!-- font-size: 11px -->
+        <div class="date">Dates</div> <!-- font-size: 8px -->
+        <ul class="job-responsibilities">
+            <li>Responsibility</li> <!-- font-size: 8px -->
+            <li>Responsibility</li> <!-- font-size: 8px -->
+            <li>Responsibility</li> <!-- font-size: 8px -->
+        </ul>
+     </div>
+     <div>
+        <div>
+            <div class="workplace-name">Company name and </div>
+            <div class="job-title">job title</div>
+        </div><!-- font-size: 11px -->
+        <div class="date">Dates</div> <!-- font-size: 8px -->
+        <ul class="job-responsibilities">
+            <li>Responsibility</li> <!-- font-size: 8px -->
+            <li>Responsibility</li> <!-- font-size: 8px -->
+            <li>Responsibility</li> <!-- font-size: 8px -->
+        </ul>
+     </div>
+
+
+    <!-- Skills -->
+    <div class="section-title">
+        Skills <!-- font-size: 9px; bold -->
+     </div>
+     <ul class="skill-list">
+        <li>Skill</li> <!-- font-size: 9px -->
+        <li>Skill</li> <!-- font-size: 9px -->
+        <li>Skill</li> <!-- font-size: 9px -->
+        <li>Skill</li> <!-- font-size: 9px -->
+        <li>Skill</li> <!-- font-size: 9px -->
+    </ul>  
+
+    <!-- Projects -->
+     <div class="section-title">Projects</div> <!-- font-size: 9px; bold -->
+        <div>
+            <div class="project-title">Project name</div> <!-- font-size: 11px -->
+            <ul class="project-tasks">
+                <li>Responsibility</li> <!-- font-size: 9px -->
+                <li>Responsibility</li> <!-- font-size: 9px -->
+                <li>Responsibility</li> <!-- font-size: 9px -->
+            </ul>
+        </div>
+    
+    <!-- Visitor Counter -->
+    <div class="visitor-count-display">
+        <div>Visitor Count: <span class="visitor-count">##</span></div>
+    </div>
+</body>
+</html>

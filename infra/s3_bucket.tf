@@ -1,0 +1,60 @@
+// ***** NOT COMPLETE YET *****
+
+
+resource "aws_s3_bucket" "cloud-resume-project-s3" {
+	bucket = "cloud-resume-project-s3"
+}
+
+resource "aws_s3_bucket_public_access_block" "example" {
+  bucket = aws_s3_bucket.cloud-resume-project-s3.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+
+resource "aws_s3_bucket_acl" "example" {
+  depends_on = [aws_s3_bucket_ownership_controls.example]
+
+  bucket = aws_s3_bucket.cloud-resume-project-s3.id
+  acl    = "private"
+}
+
+resource "aws_s3_bucket_website_configuration" "example" {
+  bucket = aws_s3_bucket.cloud-resume-project-s3s.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "error.html"
+  }
+
+  routing_rule {
+    condition {
+      key_prefix_equals = "docs/"
+    }
+    redirect {
+      replace_key_prefix_with = "documents/"
+    }
+  }
+}
+
+resource "aws_s3_object" "js_file" {
+  key        = "someobject"
+  bucket     = aws_s3_bucket.cloud-resume-project-s3.id
+  source     = "script.js"
+}
+
+resource "aws_s3_object" "css_file" {
+  key        = "someobject"
+  bucket     = aws_s3_bucket.cloud-resume-project-s3.id
+  source     = "styles.css"
+}
+
+locals {
+  s3_origin_id = "myS3Origin"
+}
