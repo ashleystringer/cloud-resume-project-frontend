@@ -1,11 +1,17 @@
-// ***** NOT COMPLETE YET *****
-
+locals {
+  s3_origin_id = "myS3Origin"
+  website_file = {
+    "index.html" = "text/html"
+    "styles.css" = "text/css"
+    "script.js" = "application/javascript"
+  }
+}
 
 resource "aws_s3_bucket" "cloud-resume-project-s3" {
 	bucket = "cloud-resume-project-s3"
 }
 
-resource "aws_s3_bucket_public_access_block" "example" {
+resource "aws_s3_bucket_public_access_block" "crp_public_access_block" {
   bucket = aws_s3_bucket.cloud-resume-project-s3.id
 
   block_public_acls       = false
@@ -14,47 +20,21 @@ resource "aws_s3_bucket_public_access_block" "example" {
   restrict_public_buckets = false
 }
 
-
-resource "aws_s3_bucket_acl" "example" {
-  depends_on = [aws_s3_bucket_ownership_controls.example]
-
+resource "aws_s3_bucket_website_configuration" "crp_website_config" {
   bucket = aws_s3_bucket.cloud-resume-project-s3.id
-  acl    = "private"
-}
-
-resource "aws_s3_bucket_website_configuration" "example" {
-  bucket = aws_s3_bucket.cloud-resume-project-s3s.id
 
   index_document {
     suffix = "index.html"
   }
-
-  error_document {
-    key = "error.html"
-  }
-
-  routing_rule {
-    condition {
-      key_prefix_equals = "docs/"
-    }
-    redirect {
-      replace_key_prefix_with = "documents/"
-    }
-  }
 }
 
-resource "aws_s3_object" "js_file" {
-  key        = "someobject"
+resource "aws_s3_object" "website_files" {
+  for_each = local.website_file
   bucket     = aws_s3_bucket.cloud-resume-project-s3.id
-  source     = "script.js"
+  key = each.key
+  source = "../src/${each.key}"
+  ##etag = filemd5("${path.module}/src/${each.key}")
+  content_type = each.value
 }
 
-resource "aws_s3_object" "css_file" {
-  key        = "someobject"
-  bucket     = aws_s3_bucket.cloud-resume-project-s3.id
-  source     = "styles.css"
-}
 
-locals {
-  s3_origin_id = "myS3Origin"
-}

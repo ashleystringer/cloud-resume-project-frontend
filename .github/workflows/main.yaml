@@ -1,0 +1,79 @@
+### Code so far is a copy of the backend main.yaml file
+### And falls in both the build and deploy stages
+### NEED TO AUTOMATICALLY UPDATE THE S3 BUCKET IN THIS FILE WHEN SITE CODE IS CHANGED
+### ALSO NEED TO INVALIDATE OR CLEAR CLOUDFRONT CACHE
+
+### !!!! NEED TO FIGURE OUT HOW THIS WILL BE TESTED WITH THE BACKEND !!!! 
+### Update - I think I know now.
+
+name: Test and Deploy
+
+##on: [push] ## change this to account for changes in src directory (see documentation)
+## You MAY need to a separate 'on' event for deploying to Terraform in general.
+
+on:
+  push:
+    paths:
+      - "infra/**"
+    branches: 
+      - main
+
+on: 
+  push:
+    paths:
+      - "src/**" 
+    branches: 
+      - main
+
+jobs:
+  runs-on: ubuntu-latest
+
+  env:
+    AWS_REGION: us-east-2
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+        - name: Install Python dependencies 
+          run: |
+            python -m pip install --upgrade pip
+            pip install -r tests_package/requirements.txt
+            pip install pytest
+
+          - name: Run Pytest
+            run: pytest
+
+          ## See if you need to set up any browsers for the Playwright e2e tests
+          ## NEED TO DO THIS: pytest --browser webkit --browser firefox
+          ## pytest tests_package/e2e/e2e.py
+
+          - name: Set up Terraform
+            uses: hashicorp/setup-terraform@v3
+
+          - name: Terraform init
+            run: terraform init
+            working-directory: infra
+
+          - name: Terraform Apply
+            run: terraform apply -auto-approve
+            working-directory: infra
+            env:
+              AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+              AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+              AWS_REGION: ${{ secrets.AWS_REGION }}
+            
+          - name: Sync S3 Bucket
+            run: |
+              aws s3 sync src/ s3://$S3_BUCKET/ \
+              --delete \
+              --acl public-read \
+              --cache-control max-age=3600 \
+              --exclude ".git/*"
+
+        
