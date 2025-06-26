@@ -28,6 +28,65 @@ resource "aws_s3_bucket_website_configuration" "crp_website_config" {
   }
 }
 
+
+//CREATE A BUCKET POLICY
+resource "aws_s3_bucket_policy" "s3_bucket_policy_cloudfront" {
+  bucket = aws_s3_bucket.cloud-resume-project-s3.id
+  policy = data.aws_iam_policy_document.allow_access_for_cloudfront.json
+}
+
+data "aws_iam_policy_document" "allow_access_for_cloudfront" {
+  statement {
+    sid = "AllowCloudFrontServicePrincipal"
+
+    principals {
+      type        = "Service"
+      identifiers = ["cloudfront.amazonaws.com"]
+    }
+    
+    actions = [
+      "s3:GetObject"
+    ]
+
+    resources = "${aws_s3_bucket.cloud-resume-project-s3.arn}/*"
+
+    condition {
+      test = "StringEquals"
+      variable = "AWS:SourceArn"
+      values = [
+        aws_cloudfront_distribution.cloudfront_distribution.arn
+      ]
+    }
+
+  }
+}
+
+/*
+##### ORIGINAL BUCKET POLICY #####
+{
+    "Version": "2008-10-17",
+    "Id": "PolicyForCloudFrontPrivateContent",
+    "Statement": [
+        {
+            "Sid": "AllowCloudFrontServicePrincipal", //FIGURE OUT WHAT THIS IS
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "cloudfront.amazonaws.com"
+            },
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::ashls-crp-s3-v1/*",
+            "Condition": {
+                "StringEquals": {
+                    "AWS:SourceArn": "arn:aws:cloudfront::851725342515:distribution/EPSDK7Z5FM07V"
+                }
+            }
+        }
+    ]
+} 
+##########
+
+*/
+
 resource "aws_s3_object" "website_files" {
   for_each = local.website_file
   bucket     = aws_s3_bucket.cloud-resume-project-s3.id
