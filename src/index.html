@@ -9,20 +9,9 @@
 
     <script defer>
                 let count = 0;
-                let url = `https://h67uyj5484.execute-api.us-east-1.amazonaws.com/count`;
+                let url = `https://{api-id}.execute-api.{region}.amazonaws.com/count`; //FIX THIS
     
                 console.log(url);
-    
-                /*fetch(url, { method: "GET" })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log(data)
-                    count = data.count
-                    console.log(count)
-                })
-                .catch(err => {
-                    console.error(err)
-                })*/
     
                 if (localStorage.getItem('visitorCount')){
                     fetch(url, { method: "GET" })
