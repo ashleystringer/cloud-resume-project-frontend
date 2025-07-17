@@ -1,0 +1,26 @@
+{
+  "name": "cloud-resume-project-frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ashleystringer/cloud-resume-project-frontend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ashleystringer/cloud-resume-project-frontend/issues"
+  },
+  "homepage": "https://github.com/ashleystringer/cloud-resume-project-frontend#readme",
+  "dependencies": {
+    "dotenv": "^16.5.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.53.1",
+    "@types/node": "^24.0.4"
+  }
+}
