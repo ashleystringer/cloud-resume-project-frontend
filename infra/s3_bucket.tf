@@ -28,11 +28,14 @@ resource "aws_s3_bucket_website_configuration" "crp_website_config" {
   }
 }
 
-
 //CREATE A BUCKET POLICY
 resource "aws_s3_bucket_policy" "s3_bucket_policy_cloudfront" {
   bucket = aws_s3_bucket.cloud-resume-project-s3.id
   policy = data.aws_iam_policy_document.allow_access_for_cloudfront.json
+}
+
+output "bucket_name" {
+  value = aws_s3_bucket.cloud-resume-project-s3.id
 }
 
 data "aws_iam_policy_document" "allow_access_for_cloudfront" {
@@ -48,7 +51,10 @@ data "aws_iam_policy_document" "allow_access_for_cloudfront" {
       "s3:GetObject"
     ]
 
-    resources = "${aws_s3_bucket.cloud-resume-project-s3.arn}/*"
+    resources = [
+      aws_s3_bucket.cloud-resume-project-s3.arn,
+      "${aws_s3_bucket.cloud-resume-project-s3.arn}/*",
+    ]
 
     condition {
       test = "StringEquals"

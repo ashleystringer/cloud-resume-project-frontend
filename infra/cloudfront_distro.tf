@@ -18,6 +18,8 @@ resource "aws_cloudfront_distribution" "cloudfront_distribution" {
   enabled             = true
   is_ipv6_enabled     = true
 
+  default_root_object = "index.html"
+
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
@@ -116,4 +118,8 @@ resource "aws_cloudfront_cache_policy" "testing_cache" {
       query_string_behavior = "none"
     }
   }
+}
+
+output "cloudfront_distro_domain_name" {
+  value = aws_cloudfront_distribution.cloudfront_distribution.domain_name
 }
