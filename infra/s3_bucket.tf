@@ -98,7 +98,6 @@ resource "aws_s3_object" "website_files" {
   bucket     = aws_s3_bucket.cloud-resume-project-s3.id
   key = each.key
   source = "../src/${each.key}"
-  ##etag = filemd5("${path.module}/src/${each.key}")
   content_type = each.value
 }
 

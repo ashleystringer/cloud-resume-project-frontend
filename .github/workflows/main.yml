@@ -64,6 +64,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
       - name: Get Website URL
         run: export WEBSITE_URL=$(terraform output -raw cloudfront_distro_domain_name)
         working-directory: ./infra
