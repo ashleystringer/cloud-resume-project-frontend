@@ -67,6 +67,10 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      - name: npm install
+        run: npm install
+        working-directory: ./
+
       - name: Get Website URL
         run: export WEBSITE_URL=$(terraform output -raw cloudfront_distro_domain_name)
         working-directory: ./infra
