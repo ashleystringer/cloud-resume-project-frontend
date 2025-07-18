@@ -27,7 +27,7 @@ jobs:
         id: set-output
         run: echo "tf-dir=infra" >> $GITHUB_OUTPUT
 
-  deploy:
+  test-deploy:
     name: Terraform Apply
     runs-on: ubuntu-latest
     needs: build
@@ -56,21 +56,14 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
-  
-      - name: Get Website URL
-        run: export WEBSITE_URL=$(terraform output -raw cloudfront_distro_domain_name)
-        working-directory: ./infra
-
-  test:
-    runs-on: ubuntu-latest
-    needs: [build, deploy]
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
 
       - name: npm install
         run: npm install
         working-directory: ./
+  
+      - name: Get Website URL
+        run: export WEBSITE_URL=$(terraform output -raw cloudfront_distro_domain_name)
+        working-directory: ./infra
 
       - name: Run Tests
         run: npx playwright test
@@ -79,7 +72,7 @@ jobs:
   upload:
     name: Upload Website to S3
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: test-deploy
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4

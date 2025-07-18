@@ -3,7 +3,7 @@
             let count = 0;
             let url = `https://nqeh8qos1e.execute-api.us-east-2.amazonaws.com/count`; //FIX THIS
     
-            //console.log(url);
+            console.log(url);
     
             if (localStorage.getItem('visitorCount')){
                 fetch(url, { method: "GET" })
