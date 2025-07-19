@@ -60,7 +60,7 @@ jobs:
   
       - name: Get Website URL
         run: |
-          website_url=$(terraform output -raw website_url)
+          website_url=$(terraform output -raw cloudfront_distro_domain_name)
           echo "WEBSITE_URL=$website_url" >> $GITHUB_ENV
         working-directory: ./infra
 
