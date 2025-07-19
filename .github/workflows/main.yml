@@ -5,13 +5,7 @@
 
 name: Deploy Infrastructure and Website
 
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'infra/**'
-      - 'src/**'
+on: [push]
 
 jobs:
   build:
@@ -60,13 +54,20 @@ jobs:
       - name: npm install
         run: npm install
         working-directory: ./
+
+      - name: Install browsers
+        run: npx playwright install
   
       - name: Get Website URL
-        run: export WEBSITE_URL=$(terraform output -raw cloudfront_distro_domain_name)
+        run: |
+          website_url=$(terraform output -raw website_url)
+          echo "WEBSITE_URL=$website_url" >> $GITHUB_ENV
         working-directory: ./infra
 
       - name: Run Tests
-        run: npx playwright test
+        run: |
+          export WEBSITE_URL=$WEBSITE_URL
+          npx playwright test
         working-directory: ./tests
 
   upload:
