@@ -25,6 +25,8 @@ jobs:
     name: Terraform Apply
     runs-on: ubuntu-latest
     needs: build
+    outputs:
+      bucket-name: ${{ steps.get-bucket-name.outputs.bucket-name }}
     defaults:
       run:
         working-directory: infra
@@ -64,6 +66,13 @@ jobs:
           echo "WEBSITE_URL=$website_url" >> $GITHUB_ENV
         working-directory: ./infra
 
+      - name: Set bucket name output
+        id: get-bucket-name
+        working-directory: ./infra
+        run: |
+          bucket_name=$(terraform output -raw s3_bucket_name)
+          echo "bucket-name=$bucket_name" >> $GITHUB_OUTPUT
+
       - name: Run Tests
         run: |
           export WEBSITE_URL=$WEBSITE_URL
@@ -75,6 +84,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: test-deploy
     steps:
+      - name: Set bucket name
+        run: echo "bucket_name=${{ needs.test-deploy.outputs.bucket-name }}" >> $GITHUB_ENV
+      
       - name: Checkout repo
         uses: actions/checkout@v4
 
@@ -85,13 +97,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
 
-      - name: Get S3 bucket name from Terraform output
-        id: tf-output
-        working-directory: infra
-        run: |
-          bucket_name=$(terraform output -raw website_bucket_name)
-          echo "BUCKET_NAME=$bucket_name" >> $GITHUB_ENV
-
       - name: Sync website files to S3
         run: |
-          aws s3 sync ./src s3://$BUCKET_NAME --delete --acl public-read
+          aws s3 sync ./src s3://$bucket_name --delete --acl public-read

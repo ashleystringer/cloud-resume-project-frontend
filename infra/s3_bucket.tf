@@ -34,7 +34,7 @@ resource "aws_s3_bucket_policy" "s3_bucket_policy_cloudfront" {
   policy = data.aws_iam_policy_document.allow_access_for_cloudfront.json
 }
 
-output "bucket_name" {
+output "s3_bucket_name" {
   value = aws_s3_bucket.cloud-resume-project-s3.id
 }
 
